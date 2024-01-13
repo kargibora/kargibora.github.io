@@ -9,10 +9,8 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <div class="mb-10 text-justify">
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-    aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-    cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    I am a Master's student in Machine Learning at University of Tübingen. I am interested in Deep Learning, Computer Vision, Self-Supervised Learning 
+    and any other related topics. 
   </div>
 
   <div class="mb-5">
@@ -21,13 +19,15 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   <div class="time-line-container grid gap-4 mb-10">
     <TimeLineElement
-      title="Title Name"
-      subtitle="[start year] to [end year] at [Study Center Name], [City], [Country]"
+      title="MSc. in Machine Learning"
+      subtitle="2023, at University of Tübingen, Tübingen, Germany"
+      extra={[]}
     />
     <TimeLineElement
-      title="Title Name"
-      subtitle="[start year] to [end year] at [Study Center Name], [City], [Country]"
-    />
+      title="BSc. in Computer Engineering"
+      subtitle="2018-2023 at Middle East Technical University, Ankara, Turkey"
+      extra={["cGPA: 3.83/4.00", "Ranked 5th in the department"]}
+      />
   </div>
 
   <div class="mb-5">
@@ -36,23 +36,63 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   <div class="time-line-container mb-10">
     <TimeLineElement
-      title="Job Title at Project or Company Name"
-      subtitle="From [Start Date] to [End Date] at [Company], [City], [Country]"
+      title="Deep Learning & Computer Vision Engineer"
+      subtitle="From Nov 2022-Aug 2023 at DataBoss Security & Consulting, Ankara, Turkey"
     >
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-    </TimeLineElement>
+    <ul class="list-disc mx-6 mb-10 grid gap-2">
+      <li>
+        Integrated and tested latest SOTA object detection models
+      </li>
+      <li>
+        Designed and tested augmentation techniques for improving the detection score of the machine learning algorithms
+      </li>
+      <li>
+        Built end-to-end pipeline for OCR to work with various newspapers sources and formats for creating a NLP dataset
+      </li>
+    </ul>    </TimeLineElement>
     <TimeLineElement
-      title="Job Title at Project or Company Name"
-      subtitle="From [Start Date] to [End Date] at [Company], [City], [Country]"
+      title="Undergraduate Researcher, Supervised by Prof. Sinan Kalkan"
+      subtitle="From September 2022 - July 2023 at Middle East Technical University, Ankara, Turkey"
     >
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-    </TimeLineElement>
+    <ul class="list-disc mx-6 mb-10 grid gap-2">
+      <li>
+        Worked on the imbalance problem the regression tasks.
+      </li>
+      <li>
+        Created a basic framework for implementing ensemble methods for regression tasks. <a class="text-blue-500" href="https://github.com/kargibora/regression-uncertainty">[Repo Link]</a>
+      </li>
+
+    </ul>    </TimeLineElement>
     <TimeLineElement
-      title="Job Title at Project or Company Name"
-      subtitle="From [Start Date] to [End Date] at [Company], [City], [Country]"
-    >
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-    </TimeLineElement>
+      title="Deep Learning & Computer Vision Engineer Intern"
+      subtitle="From August 2022 - September 2022 at Kuartis Technology and Consulting, Ankara, Turkey"
+    >  
+    <ul class="list-disc mx-6 mb-10 grid gap-2">
+      <li>
+        Implemented a deep learning model that detects and classifies objects in images.
+      </li>
+      <li>
+        Implemented a pipeline for uploading company data into annotation tool for object detection.
+      </li>
+    </ul>
+      </TimeLineElement>
+
+      <TimeLineElement
+      title="Undergraduate Researcher, Supervised by Prof. Sinan Kalkan"
+      subtitle="From August 2022 - September 2022 at KOVAN Research Lab, Ankara, Turkey"
+    >  
+    <ul class="list-disc mx-6 mb-10 grid gap-2">
+      <li>
+        Trained a robot agent that can pick up object from a table and join them together
+        from their desired spots.
+      </li>
+      <li>
+        Upgraded the camera system of the simulation environment for multiple-camera usage.
+      </li>
+    </ul>
+      </TimeLineElement>
+
+
   </div>
 
   <div class="mb-5">
@@ -73,20 +113,21 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <ul class="list-disc md:columns-5 columns-2 mx-6">
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
+    <li>Python</li>
+    <li>Pandas</li>
+    <li>PyTorch</li>
+    <li>Tensorflow</li>
+    <li>Numpy</li>
+    <li>Scikit-learn</li>
+    <li>C/C++</li>
+    <li>Flask</li>
+    <li>HTML/CSS/JS</li>
+    <li>SQL/NoSQL</li>
+    <li>Linux</li>
+    <li>Shell (Bash/Zsh)</li>
+    <li>LaTeX</li>
+    <li>Git/Github</li>
+    <li>Docker</li>
+    <li>REST</li>
   </ul>
 </BaseLayout>

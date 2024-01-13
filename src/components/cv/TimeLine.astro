@@ -1,5 +1,5 @@
 ---
-const { title, subtitle } = Astro.props;
+const { title, subtitle, extra } = Astro.props;
 ---
 
 <div class="flex">
@@ -13,5 +13,12 @@ const { title, subtitle } = Astro.props;
     <p class="my-2 text-justify">
       <slot />
     </p>
+    {extra && (
+      <ul class="list-disc mx-6 mb-10 grid gap-2">
+        {extra.map(item => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    )}
   </div>
 </div>
