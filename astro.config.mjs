@@ -9,7 +9,7 @@ import remarkSmartypants from 'remark-smartypants';
 import rehypeKatex from 'rehype-katex';
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://astrofy-template.netlify.app',
+  site: 'https://kargibora.github.io',
   integrations: [mdx(), sitemap(), tailwind()],
   markdown: {
     //mode: 'mdx',
