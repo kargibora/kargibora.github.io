@@ -1,9 +1,9 @@
 ---
 title: "Squeeze and Excitation Networks"
 description: "Squeeze and Excitation Networks to enhance a network's representational power by allowing it to undertake dynamic channel-wise feature recalibration."
-pubDate: "Jan 03 2023"
+pubDate: "Jan 03 2024"
 heroImage: "https://cdn-images-1.medium.com/v2/resize:fit:720/0*jUP1hPQRwrTUk9HO.jpg"
-tags: ["CNN", "Attention", "Computer Vision"]
+tags: ["CNN", "Attention", "Computer Vision", "Paper Review"]
 layout: '../../layouts/MarkdownLayout.astro'
 badge: "SENet"
 timeToRead: "12"
@@ -100,4 +100,3 @@ The SE block enhances a network's representational power by allowing it to under
 ---
 
 [^1]: Jie Hu, Li Shen, Samuel Albanie, Gang Sun, Enhua Wu: “Squeeze-and-Excitation Networks”, 2017; <a href='http://arxiv.org/abs/1709.01507'>arXiv:1709.01507</a>.
-[^2]
