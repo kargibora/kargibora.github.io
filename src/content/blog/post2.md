@@ -1,9 +1,9 @@
 ---
-title: "Influence Functions in XAI"
+title: "Influence Functions in XAI "
 description: ""
 pubDate: "Jan 15 2024"
-heroImage: "https://files.oaiusercontent.com/file-qbMQMDwXIkaI9aye5OLAnzgS?se=2024-01-15T21%3A59%3A37Z&sp=r&sv=2021-08-06&sr=b&rscc=max-age%3D31536000%2C%20immutable&rscd=attachment%3B%20filename%3Dadab192d-189d-4ca4-a2f5-8c3692f442a3.webp&sig=vUkc08%2BZucdsybnE/lZHo4t25sFuI%2BK27z5upOhlXAk%3D"
-tags: ["XAI","Paper Review"]
+heroImage: "https://cdn.discordapp.com/attachments/1132226098491564032/1197694763424567497/35418c4e-e91f-4a10-900f-8a8a6913cd3d.webp?ex=65bc332b&is=65a9be2b&hm=0fa9a45f43b72f289bfe2bf2ee7990150d6851f91984eccd05f9b23b23d70ff1&"
+tags: ["XAI","Paper Review", "Influence Functions"]
 layout: '../../layouts/MarkdownLayout.astro'
 badge: ""
 timeToRead: "15"
@@ -24,10 +24,10 @@ $$
 
 A simple way to calculate this effect is to retrain your model *without the data point* $x$: however this is a very costly approach as current deep learning models usually takes a long time to train.
 
-Koh et Al. [^1] use *influence functions*, which is a powerful tool in statistics, to overcome this problem. Instead of *retraining approach*, they compute how *influential* a point is on the decision with the *influential functions*.
+*Influence Functions* approximates the effect of how *influential* a point is with other points. In this blog post, we will formally defining the influential functions, their mathematical formulations, their advantages and their problems. 
 
 # 2. Influence Functions
-Consider a function, which takes input from the input space $\mathcal X$, to an output space $\mathcal Y$ given the training points $(z_i,...,z_n)$ where $z_i = (x_i,y_i) \in \mathcal X \times \mathcal Y$. Define an arbitrary lose function $L$ defined with the model parameters $\theta \in \Theta$ where
+Koh et Al. [^1] use *influence functions*, which is a powerful tool in statistics, to overcome this problem. Instead of *retraining approach*, they compute how *influential* a point is on the decision with the *influential functions*. Consider a function, which takes input from the input space $\mathcal X$, to an output space $\mathcal Y$ given the training points $(z_i,...,z_n)$ where $z_i = (x_i,y_i) \in \mathcal X \times \mathcal Y$. Define an arbitrary lose function $L$ defined with the model parameters $\theta \in \Theta$ where
 $$
 L(z,\theta) = \frac{1}{n}\sum_{i=1}^n L(z_i,\theta) \tag{2.1}
 $$
@@ -42,7 +42,7 @@ Instead of retraining to get $\hat \theta_{-z}$, what we if we approximate the r
 $$
 \hat \theta_{\epsilon, z} = \argmin_{\theta \in \Theta} \frac{1}{n} \sum_{i=1}^{n}L(z_i, \theta) + \epsilon L(z,\theta)  \tag{2.3}
 $$
-Notice that this is basically the model parameters after training the model with added weight to the $z$. Influence of upweighting $z$ can be calculated as:
+If $\epsilon = \frac{-1}{n}$, this would be equalivent to removing the point $z$ from the training set. Notice that this is basically the model parameters after training the model with added weight to the $z$. Influence of upweighting $z$ can be calculated as:
 $$
 \mathcal I_{up,params}(z) = \frac{d\hat \theta_{\epsilon,z}}{d\epsilon} \big |_{\epsilon = 0}
 $$
@@ -108,19 +108,34 @@ $$
 s_{test} = H_{\hat \theta}^{-1} \nabla_\theta L(z_{test}, \hat \theta)
 $$
 
-Authors discuss two algorithms in order to efficiently compute Hessian approximations.
+If $s_{test}$ is precomputed, calculating influence of a point $z$ on $z_{test}$ would be fast as we would only need to compute $\nabla L(z_{test},\hat \theta)$:
+$$
+\mathcal I_{up,loss}(z,z_{test}) = -s_{test} \cdot \nabla_\theta L(z_{test},\hat \theta)
+$$
 
-### 2.1.1 Conjugate Gradients
-
-### 2.1.2 Stochastic Estimation
-
+Authors discuss two algorithms in order to efficiently compute Hessian approximations. First idea is to use *conjugate gradients* method, in which the assumption of Hessian being a convex is used to transform the problem into a optimization problem. The second step [^4] uses the well known fact about the inverse of a convex matrix with $||A|| = 1$ to calculate the inverse of the matrix
+$$
+A^{-1} = \sum_{i=0}^\infty (I - A)^i
+$$
+iteratively. Let 
+$$
+H_j^{-1} = \sum_{i=0}^j (I - H)^i
+$$
+be the first $j$ terms in the Taylor expension of $H^{-1}$. We can rewrite this equation as:
+$$
+H_j^{-1} = I + (I - H)H_{j-1}^{-1}
+$$
+Notice how we can compute this iteratively : by simply storing the previous estimation of the Hessian. After sampling $t$ points from a uniform distribution, authors suggest that $H$ can be approximated with a single point $z_{s_j}$ and inverse hessian can be estimated as
+$$
+\tilde H_j^{-1} = I + (I - \nabla_{\theta}^2 L(z_{s_j},\hat \theta))\tilde H_{j-1}^{-1}
+$$
+where $\tilde H_0^{-1}v = v$ is set. With a large $t$, $\tilde H_t$ stabilizes. Authors also suggest to use this procedure $r$ times and take the average of the results. This algorithm can be used to compute $\mathcal I_{up,loss}(z_i,z_{test})$ in $O(np + rtp)$ time. To understand more about this sections, it is suggested to study the original LiSSA algorithm for estimating Hessian inverse [^4].
 
 ### 3. Experiments & Results
 
-### 4. Faster influence functions with FastIF
+### 4. Faster Influence Functions
 
-Even after the important speedups, computing influence functions in usual ways is slow due to the dimensionality of the data. *FastIF* [^3] introduces a speed-up to the conventional way with the 
-
+### 5. Fragility of Influence Funtions
 
 ---
 
@@ -129,3 +144,5 @@ Even after the important speedups, computing influence functions in usual ways i
 [^2]: Naman Agarwal, Brian Bullins, Elad Hazan: “Second-Order Stochastic Optimization for Machine Learning in Linear Time”, 2016, Journal of Machine Learning Research 18(116) (2017) 1-40; <a href='http://arxiv.org/abs/1602.03943'>arXiv:1602.03943</a>.
 
 [^3]: Han Guo, Nazneen Fatema Rajani, Peter Hase, Mohit Bansal, Caiming Xiong: “FastIF: Scalable Influence Functions for Efficient Model Interpretation and Debugging”, 2020; <a href='http://arxiv.org/abs/2012.15781'>arXiv:2012.15781</a>.
+
+[^4]: Naman Agarwal, Brian Bullins, Elad Hazan: “Second-Order Stochastic Optimization for Machine Learning in Linear Time”, 2016, Journal of Machine Learning Research 18(116) (2017) 1-40; <a href='http://arxiv.org/abs/1602.03943'>arXiv:1602.03943</a>.
