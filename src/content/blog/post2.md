@@ -2,7 +2,7 @@
 title: "Influence Functions in XAI "
 description: ""
 pubDate: "Jan 15 2024"
-heroImage: "https://cdn.discordapp.com/attachments/1132226098491564032/1197694763424567497/35418c4e-e91f-4a10-900f-8a8a6913cd3d.webp?ex=65bc332b&is=65a9be2b&hm=0fa9a45f43b72f289bfe2bf2ee7990150d6851f91984eccd05f9b23b23d70ff1&"
+heroImage: "https://media.istockphoto.com/id/1140819116/photo/math-and-geometry-concept.jpg?s=612x612&w=0&k=20&c=iegPAlpFbqAMI-GuaD7ly8BEYtizimLN3kxjcbWIX6w="
 tags: ["XAI","Paper Review", "Influence Functions"]
 layout: '../../layouts/MarkdownLayout.astro'
 badge: ""
