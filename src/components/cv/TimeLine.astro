@@ -1,5 +1,5 @@
 ---
-const { title, subtitle, extra } = Astro.props;
+const { title, subtitle, extra, date } = Astro.props;
 ---
 
 <div class="flex">
@@ -10,6 +10,9 @@ const { title, subtitle, extra } = Astro.props;
   <div class="experience__data bd-grid px-5">
     <h3 class="font-semibold mb-1">{title}</h3>
     <span class="font-light text-sm">{subtitle}</span>
+    <div class="date__data text-left">
+      <span class="font-light text-xs">{date}</span>
+    </div>
     <p class="my-2 text-justify">
       <slot />
     </p>
@@ -21,4 +24,5 @@ const { title, subtitle, extra } = Astro.props;
       </ul>
     )}
   </div>
+
 </div>

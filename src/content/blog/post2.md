@@ -2,6 +2,7 @@
 title: "Influence Functions in XAI "
 description: ""
 pubDate: "Jan 15 2024"
+updatedDate: "March 4, 2024"
 heroImage: "https://media.istockphoto.com/id/1140819116/photo/math-and-geometry-concept.jpg?s=612x612&w=0&k=20&c=iegPAlpFbqAMI-GuaD7ly8BEYtizimLN3kxjcbWIX6w="
 tags: ["XAI","Paper Review", "Influence Functions"]
 layout: '../../layouts/MarkdownLayout.astro'
@@ -267,11 +268,13 @@ $$
 
 ### 3. Experiments & Results
 
+**WIP**
   
 
 ### 4. Faster Influence Functions
 
-  
+ **WIP**
+
 
 # 5. Fragility of Influence Functions
 

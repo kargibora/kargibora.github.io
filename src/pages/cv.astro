@@ -1,10 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import TimeLineElement from "../components/cv/TimeLine.astro";
+import Achievement from "../components/cv/Achievements.astro";
+import myPDF from '../assets/Bora_CV_University.pdf';
 ---
 
 <BaseLayout title="Resume" sideBarActiveItemID="cv">
-  <div class="mb-5">
+  <div class="pdf-link mb-5">
+    You can view my CV in a PDF form by clicking <a href={myPDF} target="_blank" class="text-blue-500">here</a>.
+  </div>    
     <div class="text-3xl w-full font-bold">Education</div>
   </div>
 
@@ -28,7 +32,8 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   <div class="time-line-container mb-10">
     <TimeLineElement
       title="Deep Learning & Computer Vision Engineer"
-      subtitle="From Nov 2022-Aug 2023 at DataBoss Security & Consulting, Ankara, Turkey"
+      subtitle="DataBoss Security & Consulting, Ankara, Turkey"
+      date="Nov 2022-Aug 2023"
     >
     <ul class="list-disc mx-6 mb-10 grid gap-2">
       <li>
@@ -42,35 +47,24 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
       </li>
     </ul>    </TimeLineElement>
     <TimeLineElement
-      title="Undergraduate Researcher, Supervised by Prof. Sinan Kalkan"
-      subtitle="From September 2022 - July 2023 at Middle East Technical University, Ankara, Turkey"
-    >
-    <ul class="list-disc mx-6 mb-10 grid gap-2">
-      <li>
-        Worked on the imbalance problem the regression tasks.
-      </li>
-      <li>
-        Created a basic framework for implementing ensemble methods for regression tasks. <a class="text-blue-500" href="https://github.com/kargibora/regression-uncertainty">[Repo Link]</a>
-      </li>
-
-    </ul>    </TimeLineElement>
-    <TimeLineElement
       title="Deep Learning & Computer Vision Engineer Intern"
-      subtitle="From August 2022 - September 2022 at Kuartis Technology and Consulting, Ankara, Turkey"
+      subtitle="Kuartis Technology and Consulting, Ankara, Turkey"
+      date="Aug 2022 - Sep 2022"
     >  
     <ul class="list-disc mx-6 mb-10 grid gap-2">
       <li>
-        Implemented a deep learning model that detects and classifies objects in images.
+        Implemented a deep learning model that segments and classfies the roads type for the autonomous vehicle.
       </li>
       <li>
-        Implemented a pipeline for uploading company data into annotation tool for object detection.
+        Implemented and automized a pipeline for uploading company data into annotation tool for object detection and segmentation.
       </li>
     </ul>
       </TimeLineElement>
 
-      <TimeLineElement
+    <TimeLineElement
       title="Undergraduate Researcher, Supervised by Prof. Sinan Kalkan"
-      subtitle="From August 2022 - September 2022 at KOVAN Research Lab, Ankara, Turkey"
+      subtitle="KOVAN Research Lab, Ankara, Turkey"
+      date="Aug 2021 - Sep 2021"
     >  
     <ul class="list-disc mx-6 mb-10 grid gap-2">
       <li>
@@ -83,6 +77,22 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     </ul>
       </TimeLineElement>
 
+      <TimeLineElement
+      title="Undergraduate Researcher, Supervised by Prof. Reda Alhajj"
+      subtitle="TUBITAK, Ankara, Turkey"
+      date="Feb 2021 - Jul 2021"
+    >  
+    <ul class="list-disc mx-6 mb-10 grid gap-2">
+      <li>
+        Created a web-based tool that allows users to upload datasets, display them, preprocess them, and then utilize the preprocessed datasets to
+        train machine learning or deep learning models.
+      </li>
+      <li>
+        Using LSTM, trained a deep learning model to predict whether or not a patient has a certain eye illness.
+      </li>
+    </ul>
+      </TimeLineElement>
+      
 
   </div>
 
@@ -121,4 +131,15 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     <li>Docker</li>
     <li>REST</li>
   </ul>
+
+  <!-- <div class="mb-5">
+    <div class="text-3xl w-full font-bold">Achievements</div>
+  </div>
+
+
+  <Achievement
+    description="Ranked 5th in the department"
+    place="Middle East Technical University, Ankara, Turkey"
+    date="2023"
+  > -->
 </BaseLayout>
