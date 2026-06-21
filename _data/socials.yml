@@ -1,5 +1,6 @@
 # Social links for Bora Kargi. Order here = display order.
-email: kargibora@gmail.com
+# Email intentionally omitted here to avoid a raw mailto: link (spambot-scrapable);
+# the address is shown obfuscated under the profile photo in _pages/about.md.
 github_username: kargibora
 linkedin_username: bora-kargi
 x_username: bora_kargi

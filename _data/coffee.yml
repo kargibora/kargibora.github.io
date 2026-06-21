@@ -1,0 +1,31 @@
+# ☕ Coffee log — places I've been to.
+# Add a café by copying a block. Coordinates are decimal lat/lng (right-click a spot in Google Maps → copy).
+# ratings are 1–5: coffee (the cup), vibe (the space), price (value — higher = better value).
+# NOTE: the entries below are EXAMPLES with placeholder reviews/ratings — edit or replace them.
+
+- name: Kaffeehaus
+  city: Tübingen
+  lat: 48.5211
+  lng: 9.0558
+  ratings: { coffee: 5, vibe: 4, price: 3 }
+  tags: [espresso, cake]
+  review: "TODO: your review — e.g. cosy spot near the Holzmarkt, the espresso is the highlight."
+  url:
+
+- name: Tante Emma
+  city: Tübingen
+  lat: 48.5203
+  lng: 9.0549
+  ratings: { coffee: 4, vibe: 5, price: 4 }
+  tags: [filter, brunch]
+  review: "TODO: your review — relaxed, great for a slow morning and a long chat."
+  url:
+
+- name: Macchiato
+  city: Tübingen
+  lat: 48.5217
+  lng: 9.0562
+  ratings: { coffee: 3, vibe: 3, price: 5 }
+  tags: [to-go, cappuccino]
+  review: "TODO: your review — reliable cup when you're on the move."
+  url:
