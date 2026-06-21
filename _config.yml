@@ -175,6 +175,9 @@ collections:
     defaults:
       layout: post
     output: true
+  coffee:
+    output: true
+    permalink: /coffee/:name/
 
 # -----------------------------------------------------------------------------
 # Jekyll settings

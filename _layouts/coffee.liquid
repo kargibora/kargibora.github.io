@@ -1,0 +1,69 @@
+---
+layout: page
+---
+
+<link rel="stylesheet" href="{{ '/assets/leaflet/leaflet.css' | relative_url }}" />
+<script src="{{ '/assets/leaflet/leaflet.js' | relative_url }}"></script>
+
+<style>
+  .coffee-detail-meta { color: var(--global-text-color-light, #828282); font-size: .9rem; margin-bottom: 1rem; }
+  .coffee-stars { display: inline-block; position: relative; font-family: Times, "Times New Roman", serif; font-size: 1.05rem; line-height: 1; letter-spacing: 2px; }
+  .coffee-stars::before { content: "★★★★★"; color: var(--global-divider-color, #ddd); }
+  .coffee-stars > span { position: absolute; left: 0; top: 0; overflow: hidden; white-space: nowrap; color: var(--global-theme-color, #b509ac); }
+  .coffee-detail-ratings { display: flex; flex-wrap: wrap; gap: 1.4rem; margin: 1rem 0 1.3rem; }
+  .coffee-detail-ratings .row { display: flex; flex-direction: column; gap: .2rem; }
+  .coffee-detail-ratings .aspect { font-size: .78rem; text-transform: capitalize; color: var(--global-text-color-light, #828282); }
+  .coffee-detail-ratings .val { font-size: .78rem; color: var(--global-text-color-light, #828282); margin-left: .35rem; }
+  .coffee-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: .2rem 0 1.2rem; }
+  .coffee-tag { font-size: .74rem; padding: .14rem .6rem; border-radius: 999px; border: 1px solid var(--global-divider-color, #e5e5e5); color: var(--global-text-color-light, #828282); text-transform: lowercase; }
+  #coffee-detail-map { height: 320px; width: 100%; border-radius: 10px; border: 1px solid var(--global-divider-color, #e5e5e5); margin: 0 0 1.5rem; z-index: 0; }
+  .coffee-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .8rem; margin: 1.2rem 0; }
+  .coffee-gallery img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; }
+  .coffee-back { display: inline-block; margin-top: 2rem; font-weight: 600; }
+</style>
+
+<p class="coffee-detail-meta">
+  {{ page.city }}{% if page.country %}, {{ page.country }}{% endif %}{% if page.address %} · {{ page.address }}{% endif %}{% if page.website %} · <a href="{{ page.website }}" target="_blank" rel="noopener">website ↗</a>{% endif %}
+</p>
+
+<div class="coffee-detail-ratings">
+  {% assign aspects = "coffee,vibe,price" | split: "," %}
+  {% for a in aspects %}
+  {% assign r = page.ratings[a] %}
+  <div class="row">
+    <span class="aspect">{{ a }}<span class="val">{{ r }}</span></span>
+    <span class="coffee-stars"><span style="width: {{ r | times: 20 }}%">★★★★★</span></span>
+  </div>
+  {% endfor %}
+</div>
+
+{% if page.tags %}
+<div class="coffee-tags">
+  {% for t in page.tags %}<span class="coffee-tag">{{ t }}</span>{% endfor %}
+</div>
+{% endif %}
+
+<div id="coffee-detail-map"></div>
+
+{% if page.images %}
+<div class="coffee-gallery">
+  {% for img in page.images %}<img src="{{ img | relative_url }}" alt="{{ page.title }}" loading="lazy" />{% endfor %}
+</div>
+{% endif %}
+
+{{ content }}
+
+<a class="coffee-back" href="{{ '/coffee/' | relative_url }}">← all coffee</a>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof L === "undefined" || !document.getElementById("coffee-detail-map")) return;
+    const lat = {{ page.lat }}, lng = {{ page.lng }};
+    const map = L.map("coffee-detail-map", { scrollWheelZoom: false }).setView([lat, lng], 16);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+    L.marker([lat, lng]).addTo(map).bindPopup({{ page.title | jsonify }}).openPopup();
+  });
+</script>
