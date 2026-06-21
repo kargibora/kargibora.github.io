@@ -56,11 +56,18 @@ removed where safe.
   teaching, news) and any nav/scholar config they require.
 - Keep: dark/light toggle, publication search (`bib_search`), default accent
   color (changeable later).
-- Social links (`_data/socials` or config) → placeholders.
+- Social links → real values:
+  - GitHub: `kargibora`
+  - Google Scholar: `lLPNr-MAAAAJ` (https://scholar.google.com/citations?user=lLPNr-MAAAAJ&hl=tr)
+  - LinkedIn: `bora-kargi`
+  - X/Twitter: `bora_kargi`
 
 ## Content scaffolding (placeholders, marked `TODO: replace`)
 
-- `assets/img/prof_pic.*` — placeholder profile photo.
+- `assets/img/prof_pic.*` — profile photo sourced from the user's ELLIS
+  profile (https://institute-tue.ellis.eu/en/people/539b8b42-92ac-4b6f-8f89-4471b94d1285).
+  If the image cannot be fetched at build time, fall back to a clearly-marked
+  placeholder.
 - `assets/pdf/cv.pdf` — placeholder CV PDF.
 - `_pages/about.md` — bio + research interests draft.
 - One `_posts/` example blog post.
