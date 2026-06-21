@@ -9,10 +9,10 @@ layout: page
   .coffee-detail-meta { color: var(--global-text-color-light, #828282); font-size: .9rem; margin-bottom: 1rem; }
   .coffee-stars { color: var(--global-theme-color, #b509ac); font-size: .95rem; letter-spacing: 2px; white-space: nowrap; }
   .coffee-stars .fa-regular { color: var(--global-divider-color, #c8c8c8); }
-  .coffee-detail-ratings { display: flex; flex-wrap: wrap; gap: 1.4rem; margin: 1rem 0 1.3rem; }
-  .coffee-detail-ratings .row { display: flex; flex-direction: column; gap: .2rem; }
-  .coffee-detail-ratings .aspect { font-size: .78rem; text-transform: capitalize; color: var(--global-text-color-light, #828282); }
-  .coffee-detail-ratings .val { font-size: .78rem; color: var(--global-text-color-light, #828282); margin-left: .35rem; }
+  .coffee-detail-ratings { display: flex; flex-direction: column; gap: .45rem; margin: 1rem 0 1.4rem; max-width: 340px; }
+  .coffee-detail-ratings .row { display: grid; grid-template-columns: 4rem 1fr auto; align-items: center; gap: .7rem; }
+  .coffee-detail-ratings .aspect { font-size: .85rem; text-transform: capitalize; color: var(--global-text-color-light, #828282); }
+  .coffee-detail-ratings .val { font-size: .8rem; color: var(--global-text-color-light, #828282); }
   .coffee-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: .2rem 0 1.2rem; }
   .coffee-tag { font-size: .74rem; padding: .14rem .6rem; border-radius: 999px; border: 1px solid var(--global-divider-color, #e5e5e5); color: var(--global-text-color-light, #828282); text-transform: lowercase; }
   #coffee-detail-map { height: 320px; width: 100%; border-radius: 10px; border: 1px solid var(--global-divider-color, #e5e5e5); margin: 0 0 1.5rem; z-index: 0; }
@@ -33,8 +33,9 @@ layout: page
   {% assign rem = r | minus: full %}
   {% assign used = full %}
   <div class="row">
-    <span class="aspect">{{ a }}<span class="val">{{ r }}</span></span>
+    <span class="aspect">{{ a }}</span>
     <span class="coffee-stars">{% if full > 0 %}{% for i in (1..full) %}<i class="fa-solid fa-star"></i>{% endfor %}{% endif %}{% if rem >= 0.5 %}<i class="fa-solid fa-star-half-stroke"></i>{% assign used = full | plus: 1 %}{% endif %}{% assign blanks = 5 | minus: used %}{% if blanks > 0 %}{% for i in (1..blanks) %}<i class="fa-regular fa-star"></i>{% endfor %}{% endif %}</span>
+    <span class="val">{{ r }}</span>
   </div>
   {% endfor %}
 </div>
