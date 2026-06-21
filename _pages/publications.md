@@ -14,3 +14,14 @@ nav_order: 2
 {% bibliography %}
 
 </div>
+
+<style>
+  /* Give publication previews more room so figures/animations are legible. */
+  @media (min-width: 576px) {
+    .publications .row > .abbr { flex: 0 0 30% !important; max-width: 30% !important; }
+    .publications .row > div[id] { flex: 0 0 68% !important; max-width: 68% !important; }
+  }
+  /* Keep the venue badge compact even though its column is now wider. */
+  .publications .abbr .badge { max-width: 6.5rem; }
+  .publications .abbr .preview { width: 100%; height: auto; margin-top: 0.5rem; }
+</style>
