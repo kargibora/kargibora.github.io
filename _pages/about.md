@@ -3,14 +3,15 @@ layout: about
 title: about
 permalink: /
 subtitle: >
-  <!-- TODO: replace with your affiliation, e.g. PhD Student, ELLIS Institute Tübingen -->
+  Research Engineer at the <a href="https://ellis.eu/research/sites/institute-tubingen">ELLIS Institute Tübingen</a> · LLM evaluation for <a href="https://openeurollm.eu/">OpenEuroLLM</a>
 
 profile:
   align: right
   image: prof_pic.jpg
   image_circular: false
   more_info: >
-    <!-- TODO: replace or remove -->
+    <p>Research Engineer</p>
+    <p>ELLIS Institute Tübingen</p>
     <p>Tübingen, Germany</p>
 
 selected_papers: true
@@ -25,8 +26,10 @@ latest_posts:
   limit: 3
 ---
 
-<!-- TODO: replace this bio with your own. -->
-I am Bora Kargi. I am interested in <!-- TODO: your research interests, e.g. machine learning, computer vision -->.
+I am a Research Engineer at the [ELLIS Institute Tübingen](https://ellis.eu/research/sites/institute-tubingen), where I work on the [OpenEuroLLM](https://openeurollm.eu/) project, focusing on the **evaluation** of large language models.
 
-My selected publications appear below, and you can read more on the
-[publications](/publications/) page or download my [CV](/cv/).
+I hold an MSc in [Machine Learning from the University of Tübingen](https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/studium/studierende/lehre-studienorganisation/studiengaenge/machine-learning/) and a BSc in Computer Engineering from [Middle East Technical University (METU)](https://www.metu.edu.tr/). During my master's, I worked as a research assistant (HiWi) on [Scholar Inbox](https://www.scholar-inbox.com/), developing its paper-recommendation system in Prof. Andreas Geiger's Autonomous Vision Group. For my thesis, supervised by Prof. Seong Joon Oh in the [Scalable Trustworthy AI group](https://s-t-a-i.github.io/), I studied a fragility of CLIP-based vision–language models — how they can be misled by plausible but incorrect details ("half-truths").
+
+My interests center on **trustworthy and robust machine learning**: evaluating large language models, understanding compositionality in vision–language models, and building recommender systems for science.
+
+My selected publications appear below — see the [publications](/publications/) page for the full list, or take a look at my [CV](/cv/).
