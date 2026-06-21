@@ -3,9 +3,9 @@ layout: coffee
 title: Die Apoteka
 city: Tübingen
 country: Germany
-# No street address provided yet — coordinates are an approximate old-town pin. Please adjust.
-lat: 48.5199
-lng: 9.0549
+address: Friedrich-Miescher-Straße 4, 72076 Tübingen
+lat: 48.53830812060988
+lng: 9.057572413494208
 ratings:
   coffee: 5.0
   vibe: 5.0
