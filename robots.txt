@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://kargibora.github.io/sitemap.xml
