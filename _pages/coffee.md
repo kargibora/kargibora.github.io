@@ -54,9 +54,12 @@ description: A running log of the coffee places I've been to — I like coffee i
         {% assign aspects = "coffee,vibe,price" | split: "," %}
         {% for a in aspects %}
         {% assign r = c.ratings[a] %}
+        {% assign full = r | floor %}
+        {% assign rem = r | minus: full %}
+        {% assign used = full %}
         <div class="coffee-rating-row">
           <span class="coffee-aspect">{{ a }}</span>
-          <span class="coffee-stars"><span style="width: {{ r | times: 20 }}%">★★★★★</span></span>
+          <span class="coffee-stars">{% if full > 0 %}{% for i in (1..full) %}<i class="fa-solid fa-star"></i>{% endfor %}{% endif %}{% if rem >= 0.5 %}<i class="fa-solid fa-star-half-stroke"></i>{% assign used = full | plus: 1 %}{% endif %}{% assign blanks = 5 | minus: used %}{% if blanks > 0 %}{% for i in (1..blanks) %}<i class="fa-regular fa-star"></i>{% endfor %}{% endif %}</span>
           <span class="coffee-val">{{ r }}</span>
         </div>
         {% endfor %}
@@ -93,9 +96,8 @@ description: A running log of the coffee places I've been to — I like coffee i
   .coffee-rating-row { display: grid; grid-template-columns: 3.2rem 1fr auto; align-items: center; gap: .5rem; }
   .coffee-aspect { font-size: .8rem; color: var(--global-text-color-light, #828282); text-transform: capitalize; }
   .coffee-val { font-size: .78rem; color: var(--global-text-color-light, #828282); }
-  .coffee-stars { display: inline-block; position: relative; font-family: Times, "Times New Roman", serif; font-size: .95rem; line-height: 1; letter-spacing: 2px; }
-  .coffee-stars::before { content: "★★★★★"; color: var(--global-divider-color, #ddd); }
-  .coffee-stars > span { position: absolute; left: 0; top: 0; overflow: hidden; white-space: nowrap; color: var(--global-theme-color, #b509ac); }
+  .coffee-stars { color: var(--global-theme-color, #b509ac); font-size: .8rem; letter-spacing: 1.5px; white-space: nowrap; }
+  .coffee-stars .fa-regular { color: var(--global-divider-color, #c8c8c8); }
   .coffee-review { font-size: .9rem; margin: .4rem 0 .3rem; }
   .coffee-link { font-size: .82rem; font-weight: 600; }
 </style>

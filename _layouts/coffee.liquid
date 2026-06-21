@@ -7,9 +7,8 @@ layout: page
 
 <style>
   .coffee-detail-meta { color: var(--global-text-color-light, #828282); font-size: .9rem; margin-bottom: 1rem; }
-  .coffee-stars { display: inline-block; position: relative; font-family: Times, "Times New Roman", serif; font-size: 1.05rem; line-height: 1; letter-spacing: 2px; }
-  .coffee-stars::before { content: "★★★★★"; color: var(--global-divider-color, #ddd); }
-  .coffee-stars > span { position: absolute; left: 0; top: 0; overflow: hidden; white-space: nowrap; color: var(--global-theme-color, #b509ac); }
+  .coffee-stars { color: var(--global-theme-color, #b509ac); font-size: .95rem; letter-spacing: 2px; white-space: nowrap; }
+  .coffee-stars .fa-regular { color: var(--global-divider-color, #c8c8c8); }
   .coffee-detail-ratings { display: flex; flex-wrap: wrap; gap: 1.4rem; margin: 1rem 0 1.3rem; }
   .coffee-detail-ratings .row { display: flex; flex-direction: column; gap: .2rem; }
   .coffee-detail-ratings .aspect { font-size: .78rem; text-transform: capitalize; color: var(--global-text-color-light, #828282); }
@@ -30,9 +29,12 @@ layout: page
   {% assign aspects = "coffee,vibe,price" | split: "," %}
   {% for a in aspects %}
   {% assign r = page.ratings[a] %}
+  {% assign full = r | floor %}
+  {% assign rem = r | minus: full %}
+  {% assign used = full %}
   <div class="row">
     <span class="aspect">{{ a }}<span class="val">{{ r }}</span></span>
-    <span class="coffee-stars"><span style="width: {{ r | times: 20 }}%">★★★★★</span></span>
+    <span class="coffee-stars">{% if full > 0 %}{% for i in (1..full) %}<i class="fa-solid fa-star"></i>{% endfor %}{% endif %}{% if rem >= 0.5 %}<i class="fa-solid fa-star-half-stroke"></i>{% assign used = full | plus: 1 %}{% endif %}{% assign blanks = 5 | minus: used %}{% if blanks > 0 %}{% for i in (1..blanks) %}<i class="fa-regular fa-star"></i>{% endfor %}{% endif %}</span>
   </div>
   {% endfor %}
 </div>

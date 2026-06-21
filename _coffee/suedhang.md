@@ -19,4 +19,6 @@ summary: My first coffee shop in Tübingen — excellent beans and a wonderfully
 #   - assets/img/coffee/suedhang-1.jpg
 ---
 
-Südhang holds a special place for me — it was the **first coffee shop I went to in Tübingen**. The beans are excellent, and the location is pretty convenient, which made it an easy habit to fall into. A reliable favourite and a lovely place to start the day.
+Tucked into Tübingen's old town, Südhang was the **first coffee shop I went to in Tübingen** — so it holds a special place for me. The one small downside is that the space is relatively compact, but the vibe and the coffee more than make up for it.
+
+I regularly buy their beans for my pour-over at home, too, and they never disappoint. Lucky to have such an amazing roastery in Tübingen!
