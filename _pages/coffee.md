@@ -22,7 +22,7 @@ description: A running log of the coffee places I've been to — I like coffee i
 
 <div class="coffee-filters">
   <button class="coffee-chip active" data-region="all">All</button>
-  {% assign by_country = coffee_all | group_by: "country" %}
+  {% assign by_country = coffee_all | sort: "country" | group_by: "country" %}
   {% for grp in by_country %}
   <button class="coffee-chip" data-region="{{ grp.name | slugify }}">{{ grp.name }}</button>
   {% endfor %}
@@ -30,12 +30,12 @@ description: A running log of the coffee places I've been to — I like coffee i
 
 <div id="coffee-map"></div>
 
-{% assign by_country = coffee_all | group_by: "country" %}
+{% assign by_country = coffee_all | sort: "country" | group_by: "country" %}
 {% for cgrp in by_country %}
 {% assign region = cgrp.name | slugify %}
 <section class="coffee-region" data-region="{{ region }}">
   <h2 class="coffee-region-title">{{ cgrp.name }}</h2>
-  {% assign by_city = cgrp.items | group_by: "city" %}
+  {% assign by_city = cgrp.items | sort: "city" | group_by: "city" %}
   {% for citygrp in by_city %}
   <h3 class="coffee-city-title">{{ citygrp.name }}</h3>
   <div class="coffee-grid">
