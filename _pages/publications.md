@@ -24,4 +24,6 @@ nav_order: 2
   /* Keep the venue badge compact even though its column is now wider. */
   .publications .abbr .badge { max-width: 6.5rem; }
   .publications .abbr .preview { width: 100%; height: auto; margin-top: 0.5rem; }
+  /* The inline one-line summary (bib `note`): make it readable and distinct from the italic venue line. */
+  .publications .periodical + .periodical { font-style: normal; color: var(--global-text-color); font-size: 0.92rem; line-height: 1.45; margin-top: 0.35rem; }
 </style>
