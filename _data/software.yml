@@ -1,0 +1,15 @@
+# Software / frameworks shown in the homepage "software" section.
+# Each entry: name, description (one or two lines), and any of: github, website, paper.
+- name: JudgeArena
+  description: >
+    An open-source framework for evaluating LLMs with swappable judges — local (vLLM) or remote
+    (OpenAI, OpenRouter) — across Alpaca-Eval, Arena-Hard, and multilingual benchmarks, including
+    Elo estimation against human preference arenas. Developed at OpenEuroLLM.
+  github: https://github.com/OpenEuroLLM/JudgeArena
+- name: Scholar Inbox
+  description: >
+    An open-access platform for personalized paper recommendations, visual summaries, and a map of
+    science. I contributed to the platform as a research assistant, building its distributed worker
+    system and LLM-serving pipeline.
+  website: https://www.scholar-inbox.com
+  paper: https://aclanthology.org/2025.acl-demo.30/
