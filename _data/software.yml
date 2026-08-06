@@ -6,6 +6,7 @@
     (OpenAI, OpenRouter) — across Alpaca-Eval, Arena-Hard, and multilingual benchmarks, including
     Elo estimation against human preference arenas. Developed at OpenEuroLLM.
   github: https://github.com/OpenEuroLLM/JudgeArena
+  paper: https://arxiv.org/abs/2608.02620
 - name: Scholar Inbox
   description: >
     An open-access platform for personalized paper recommendations, visual summaries, and a map of
