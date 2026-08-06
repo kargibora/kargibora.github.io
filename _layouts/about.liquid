@@ -76,6 +76,7 @@ layout: default
         {% for item in site.data.software %}
           <div class="software-item">
             <div class="software-title">
+              {% if item.logo %}<img class="software-logo" src="{{ item.logo | prepend: 'assets/img/software/' | relative_url }}" alt="{{ item.name }} logo">{% endif %}
               {{ item.name }}
               <span class="software-links">
                 {% if item.github %}<a class="btn btn-sm z-depth-0" role="button" href="{{ item.github }}" rel="external nofollow noopener" target="_blank">GitHub</a>{% endif %}

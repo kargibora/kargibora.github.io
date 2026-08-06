@@ -35,6 +35,8 @@ latest_posts:
   .affiliation-project { color: var(--global-text-color-light, #828282); font-weight: 400; }
   .software-item { margin-bottom: 1rem; }
   .software-title { font-weight: 600; }
+  /* White chip behind the logo so dark glyphs stay visible on the dark theme. */
+  .software-logo { width: 1.35rem; height: 1.35rem; object-fit: contain; vertical-align: -0.28rem; margin-right: 0.15rem; background: #fff; border-radius: 0.3rem; padding: 0.1rem; box-shadow: 0 0 0 1px rgba(128, 128, 128, 0.25); }
   .software-links { margin-left: 0.4rem; }
   /* Match the bordered look of the publications-page link buttons. */
   .software-links .btn { font-size: 0.7rem; padding: 0.1rem 0.6rem; vertical-align: middle; color: var(--global-text-color); border: 1px solid var(--global-text-color); }

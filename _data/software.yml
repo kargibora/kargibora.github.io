@@ -1,6 +1,8 @@
 # Software / frameworks shown in the homepage "software" section.
-# Each entry: name, description (one or two lines), and any of: github, website, paper.
+# Each entry: name, description (one or two lines), optional logo (file in
+# assets/img/software/), and any of: github, website, paper.
 - name: JudgeArena
+  logo: openeurollm.png
   description: >
     An open-source framework for evaluating LLMs with swappable judges — local (vLLM) or remote
     (OpenAI, OpenRouter) — across Alpaca-Eval, Arena-Hard, and multilingual benchmarks, including
@@ -8,6 +10,7 @@
   github: https://github.com/OpenEuroLLM/JudgeArena
   paper: https://arxiv.org/abs/2608.02620
 - name: Scholar Inbox
+  logo: scholar-inbox.png
   description: >
     An open-access platform for personalized paper recommendations, visual summaries, and a map of
     science. I contributed to the platform as a research assistant, building its distributed worker
