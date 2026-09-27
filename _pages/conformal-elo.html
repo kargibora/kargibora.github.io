@@ -1,0 +1,470 @@
+---
+layout: half-truths
+permalink: /conformal-elo/
+title: "From Uncertain Judgments to Calibrated Rankings: Conformal Elo Estimation for LLM Evaluation"
+description: Turn uncertain AI judgments into calibrated model ratings. Soft-Elo estimates human Elo more accurately and produces narrower conformal prediction intervals.
+authors: '<span class="author-block"><a href="/">Bora Kargi</a><sup>1,2</sup></span>, <span class="author-block"><a href="https://geoalgo.github.io/">David Salinas</a><sup>1,2</sup></span>'
+affiliations: "<sup>1</sup> ELLIS Institute Tübingen &nbsp; <sup>2</sup> OpenEuroLLM"
+affiliation_logos:
+  - src: /assets/img/papers/conformal-elo/ellis-logo.webp
+    alt: ELLIS Institute Tübingen
+    width: 1000
+    height: 98
+  - src: /assets/img/papers/conformal-elo/openeurollm.svg
+    alt: OpenEuroLLM
+    width: 134
+    height: 61
+arxiv: "2606.13221"
+show_arxiv_link: false
+venue_above_title: true
+code_url: https://github.com/kargibora/SoftElo
+data_url: https://github.com/kargibora/SoftElo/tree/main/data
+resource_icons: true
+paper_math: true
+social_image: /assets/img/papers/conformal-elo/social.png
+social_alt: "Conformal Elo Estimation for LLM Evaluation — authors, NeurIPS 2026, and the paper overview figure."
+related_name: Half-Truths
+related_url: /half-truths/
+citation: |
+  @inproceedings{kargi2026softelo,
+    title     = {From Uncertain Judgments to Calibrated Rankings:
+                 Conformal Elo Estimation for LLM Evaluation},
+    author    = {Kargi, Bora and Salinas, David},
+    booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+    year      = {2026},
+    url       = {https://arxiv.org/abs/2606.13221}
+  }
+extra_css: /assets/css/conformal-elo.css
+extra_js: /assets/js/conformal-elo.js
+---
+
+<section class="section" id="problem" aria-labelledby="problem-heading">
+  <div class="container">
+    <h2 id="problem-heading">Estimating Elo ratings with an AI judge</h2>
+    <div class="elo-problem-grid">
+      <div class="elo-problem-text">
+        <p>
+          Language models are often compared by asking people which of two answers they prefer. These votes become <strong>Elo ratings</strong>:
+          scores that order models by how often they are preferred. Collecting enough votes for each new model is expensive.
+        </p>
+        <p>
+          An AI model can judge the answers instead. But the usual rating calculation counts only wins, ties, and losses—so a close decision counts
+          just as much as a clear win. The resulting scores can put models in roughly the right order while exaggerating the gaps between them.
+        </p>
+        <p>
+          <strong>Soft-Elo uses the judge’s score difference to estimate human preferences</strong>, then feeds those probabilities into the same
+          rating calculation.
+        </p>
+      </div>
+      <figure class="paper-figure">
+        <a href="{{ '/assets/img/papers/conformal-elo/scale-comparison.svg' | relative_url }}">
+          <img
+            src="{{ '/assets/img/papers/conformal-elo/scale-comparison.svg' | relative_url }}"
+            width="285"
+            height="230"
+            loading="lazy"
+            alt="Paper Figure 1b: Soft-Elo estimates lie closer to the diagonal matching human Elo; Hard-Elo stretches the rating scale."
+          />
+        </a>
+        <figcaption>
+          “Hard-Elo” denotes the usual win/tie/loss calculation; “Soft-Elo” is our method. Each point is a model, and the diagonal marks agreement
+          with human Elo. Figure 1b.
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section abstract-section" id="abstract" aria-labelledby="abstract-heading">
+  <div class="container reading-width">
+    <h2 id="abstract-heading">Abstract</h2>
+    <div class="abstract-text">
+      <p>
+        Evaluating new large language models typically requires costly human annotation campaigns at scale. LLM-as-a-judge offers a cheaper
+        alternative, but judge scores carry systematic errors—such as position bias, self-preference, or intransitivity—that can strongly miscalibrate
+        the resulting rankings. We quantify the resulting judge–human disagreement at two complementary levels. At the local level, we estimate
+        per-battle uncertainty from the judge’s own score differences by propagating calibrated win probabilities rather than hard labels into the
+        Bradley–Terry procedure. This estimator, <strong>Soft-Elo</strong>, brings LLM-derived ratings within
+        <strong>17.9 Elo mean absolute error</strong> of human-derived ones when averaged over 55 held-out models on LMArena.
+      </p>
+      <p>
+        At the global level, we apply split conformal prediction to the residual gap between LLM-derived and human-derived Elo ratings across held-out
+        models, producing prediction intervals with distribution-free marginal coverage guarantees under exchangeability that account for irreducible
+        LLM–human disagreement. Together, these two layers yield a low-cost evaluation tool that provides developers with calibrated Elo estimates and
+        honest uncertainty bounds, without requiring large-scale human annotations for each new model.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="score-gap" aria-labelledby="score-gap-heading">
+  <div class="container">
+    <h2 id="score-gap-heading">Score gap → human agreement</h2>
+    <p class="section-intro">
+      When a judge gives two answers almost the same score, its preferred answer is less likely to match the human’s choice. Larger score gaps are
+      more reliable. This relationship is information that a win/loss decision alone discards.
+    </p>
+    <div class="elo-agreement-figures">
+      <figure>
+        <h3>Larger gaps, more human agreement</h3>
+        <a href="{{ '/assets/img/papers/conformal-elo/figures/score-gap-agreement.pdf' | relative_url }}">
+          <img
+            src="{{ '/assets/img/papers/conformal-elo/figures/score-gap.svg' | relative_url }}"
+            width="209"
+            height="130"
+            loading="lazy"
+            alt="Human agreement rises with the absolute gap between the judge’s answer scores. Six gap bins, averaged across eight judges."
+          />
+        </a>
+        <figcaption>Eight judges, comparisons where both judge and human choose a winner. Bars show mean agreement ±1 standard deviation.</figcaption>
+      </figure>
+      <figure>
+        <h3>Match confidence to that agreement</h3>
+        <a href="{{ '/assets/img/papers/conformal-elo/figures/score-gap-agreement.pdf' | relative_url }}">
+          <img
+            src="{{ '/assets/img/papers/conformal-elo/figures/human-agreement.svg' | relative_url }}"
+            width="218"
+            height="130"
+            loading="lazy"
+            alt="For Qwen3-32B, fitting beta moves predicted confidence closer to observed judge–human agreement along the perfect-calibration diagonal."
+          />
+        </a>
+        <figcaption>
+          Calibration brings predicted confidence closer to observed agreement. Qwen3-32B; the diagonal marks perfect calibration.
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="method" aria-labelledby="pipeline-heading">
+  <div class="container">
+    <h2 id="pipeline-heading">From score gaps to Soft-Elo</h2>
+    <p class="section-intro">
+      The score gap therefore tells us more than who won: it indicates how much to trust that decision. Soft-Elo learns this link from human votes,
+      using β to convert each gap into a preference probability. It then fits Elo to these probabilities instead of win/loss labels.
+    </p>
+    <div id="elo-pipeline" class="elo-pipeline" aria-label="Interactive Soft-Elo pipeline">
+      <div class="elo-demo-toolbar">
+        <div class="elo-demo-heading">
+          <p>Explore the calculation</p>
+          <span>One new model, three rated opponents.</span>
+        </div>
+        <div class="elo-example-controls" hidden>
+          <fieldset class="elo-switch">
+            <legend class="sr-only">Comparison example</legend>
+            <label><input type="radio" name="elo-scenario" value="close" checked /><span>Close decision</span></label>
+            <label><input type="radio" name="elo-scenario" value="strong" /><span>Clear preference</span></label>
+          </fieldset>
+          <button class="quiet-button" id="elo-reset" type="button" aria-label="Reset example" title="Reset example">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false">
+              <path d="M3 10a9 9 0 1 1 2 8M3 4v6h6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="elo-stage-grid">
+        <article class="elo-stage">
+          <header>
+            <span class="elo-stage-number">01</span>
+            <h3>Score gap</h3>
+          </header>
+          <p class="elo-stage-caption">For each opponent, the judge scores both answers to the same question (1–10).</p>
+          <table class="elo-battles">
+            <thead>
+              <tr>
+                <th scope="col">Opponent</th>
+                <th scope="col">New answer</th>
+                <th scope="col">Their answer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Model A<small>Human Elo: 1,000</small></th>
+                <td><output id="elo-score-0">6.3</output></td>
+                <td><output id="elo-ref-0">4.1</output></td>
+              </tr>
+              <tr class="elo-focus">
+                <th scope="row">Model B<small>Human Elo: 1,200</small></th>
+                <td><output id="elo-score-1">6.3</output></td>
+                <td><output id="elo-ref-1">6.1</output></td>
+              </tr>
+              <tr>
+                <th scope="row">Model C<small>Human Elo: 1,400</small></th>
+                <td><output id="elo-score-2">6.3</output></td>
+                <td><output id="elo-ref-2">8.1</output></td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="elo-step-insight" id="elo-score-insight">Against B, the score gap is Δs = 6.3 − 6.1 = 0.2.</p>
+        </article>
+        <article class="elo-stage">
+          <header>
+            <span class="elo-stage-number">02</span>
+            <h3>Human preference</h3>
+          </header>
+          <p class="elo-stage-caption">
+            <var>p</var><sub>j</sub> estimates how likely a human is to prefer the new answer over opponent <var>j</var>’s answer.
+          </p>
+          <div class="elo-equation">
+            <math
+              xmlns="http://www.w3.org/1998/Math/MathML"
+              display="block"
+              aria-label="p j equals one over one plus exp of minus beta times the score gap"
+            >
+              <msub><mi>p</mi><mi>j</mi></msub
+              ><mo>=</mo>
+              <mfrac
+                ><mn>1</mn
+                ><mrow
+                  ><mn>1</mn><mo>+</mo
+                  ><msup
+                    ><mi>e</mi
+                    ><mrow
+                      ><mo>−</mo><mi>β</mi><msub><mi>Δs</mi><mi>j</mi></msub></mrow
+                    ></msup
+                  ></mrow
+                ></mfrac
+              >
+            </math>
+          </div>
+          <div class="elo-prob-header" aria-hidden="true"><span>Soft-Elo</span><span>Win/loss</span></div>
+          <div class="elo-prob-row">
+            <span class="elo-prob-reference">vs A</span>
+
+            <span class="elo-p-track" aria-hidden="true"><i id="elo-p-bar-0" style="transform: scaleX(0.7503)"></i></span
+            ><output id="elo-p-0" aria-label="Probability a human prefers the new model over Model A">75.0%</output
+            ><span class="elo-hard" id="elo-hard-0">Win</span>
+          </div>
+          <div class="elo-prob-row elo-focus">
+            <span class="elo-prob-reference">vs B</span>
+
+            <span class="elo-p-track" aria-hidden="true"><i id="elo-p-bar-1" style="transform: scaleX(0.525)"></i></span
+            ><output id="elo-p-1" aria-label="Probability a human prefers the new model over Model B">52.5%</output
+            ><span class="elo-hard" id="elo-hard-1">Win</span>
+          </div>
+          <div class="elo-prob-row">
+            <span class="elo-prob-reference">vs C</span>
+            <span class="elo-p-track" aria-hidden="true"><i id="elo-p-bar-2" style="transform: scaleX(0.2891)"></i></span
+            ><output id="elo-p-2" aria-label="Probability a human prefers the new model over Model C">28.9%</output
+            ><span class="elo-hard" id="elo-hard-2">Loss</span>
+          </div>
+          <div class="elo-beta-control" hidden>
+            <label for="elo-beta">Calibration strength β <output id="elo-beta-value">0.50</output></label
+            ><input id="elo-beta" type="range" min="0" max="1.5" step="0.05" value="0.5" />
+          </div>
+          <p class="elo-step-insight" id="elo-prob-insight">With β = 0.50, that 0.2-point gap gives a preference probability of 52.5%.</p>
+        </article>
+        <article class="elo-stage elo-rating-stage">
+          <header>
+            <span class="elo-stage-number">03</span>
+            <h3>Elo rating</h3>
+          </header>
+          <p class="elo-stage-caption">
+            We now find a rating whose predicted win rates match these probabilities. Bradley–Terry links Elo to win rates:
+          </p>
+          <div class="elo-equation">
+            <math
+              xmlns="http://www.w3.org/1998/Math/MathML"
+              display="block"
+              aria-label="Bradley Terry win probability: one over one plus ten to the power of opponent Elo minus new Elo divided by four hundred"
+            >
+              <msub><mi>q</mi><mi>j</mi></msub
+              ><mo>(</mo><mi>R</mi><mo>)</mo><mo>=</mo>
+              <mfrac
+                ><mn>1</mn
+                ><mrow
+                  ><mn>1</mn><mo>+</mo
+                  ><msup
+                    ><mn>10</mn
+                    ><mfrac
+                      ><mrow
+                        ><msub><mi>R</mi><mi>j</mi></msub
+                        ><mo>−</mo><mi>R</mi></mrow
+                      ><mn>400</mn></mfrac
+                    ></msup
+                  ></mrow
+                ></mfrac
+              >
+            </math>
+          </div>
+          <p class="elo-symbol-key"><var>R</var>: new model’s Elo · <var>R</var><sub>j</sub>: opponent’s Elo</p>
+          <div class="elo-rating-number"><output id="elo-rating">1,218</output><span>Fitted Elo · R*</span></div>
+          <div class="elo-fitted-rates" aria-label="Win probabilities predicted by the fitted Elo">
+            <span>vs A<output id="elo-fitted-0">77.8%</output></span>
+            <span class="elo-focus">vs B<output id="elo-fitted-1">52.6%</output></span>
+            <span>vs C<output id="elo-fitted-2">26.0%</output></span>
+          </div>
+          <p class="elo-step-insight" id="elo-fit-insight">Its 52.6% predicted win rate against B closely matches the 52.5% from calibration.</p>
+        </article>
+      </div>
+      <div class="elo-fit-objective">
+        <h3>The rating fit</h3>
+        <div
+          class="elo-likelihood"
+          role="math"
+          aria-label="R star equals the R maximizing the sum over opponents j of p j log q j of R plus one minus p j times log of one minus q j of R"
+        >
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msup><mi>R</mi><mo>⋆</mo></msup
+            ><mo>=</mo><munder><mo>arg max</mo><mi>R</mi></munder
+            ><munder><mo>∑</mo><mi>j</mi></munder></math
+          >
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mo>[</mo><msub><mi>p</mi><mi>j</mi></msub
+            ><mi mathvariant="normal">log</mi><msub><mi>q</mi><mi>j</mi></msub
+            ><mo>(</mo><mi>R</mi><mo>)</mo></math
+          >
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mo>+</mo><mo>(</mo><mn>1</mn><mo>−</mo><msub><mi>p</mi><mi>j</mi></msub
+            ><mo>)</mo><mi mathvariant="normal">log</mi><mo>(</mo><mn>1</mn><mo>−</mo><msub><mi>q</mi><mi>j</mi></msub
+            ><mo>(</mo><mi>R</mi><mo>)</mo><mo>)</mo><mo>]</mo></math
+          >
+        </div>
+        <p>
+          We search for the Elo rating <var>R</var> that maximizes this sum, keeping opponents’ ratings fixed. The usual calculation uses 1 for a win,
+          ½ for a tie, and 0 for a loss in place of <var>p</var><sub>j</sub>. <strong>Only these comparison targets change.</strong>
+        </p>
+      </div>
+      <p id="elo-example-status" class="sr-only" role="status"></p>
+    </div>
+  </div>
+</section>
+
+<section class="section method-section" id="intervals" aria-labelledby="interval-heading">
+  <div class="container">
+    <h2 id="interval-heading">Conformal prediction intervals</h2>
+    <p class="section-intro">
+      This gives one estimated Elo rating. AI judges can still disagree with people, so we measure the remaining Elo errors on models with human
+      ratings and use them to set an interval around each new estimate.
+    </p>
+    <div class="elo-interval-demo" id="elo-interval-demo">
+      <p class="elo-example-label">Interval example</p>
+      <div class="elo-interval-controls" hidden>
+        <fieldset class="elo-switch">
+          <legend>Target coverage</legend>
+          <label><input type="radio" name="elo-coverage" value="0.9" checked /><span>90%</span></label
+          ><label><input type="radio" name="elo-coverage" value="0.95" /><span>95%</span></label>
+        </fieldset>
+      </div>
+      <div class="elo-interval-grid">
+        <figure>
+          <h3>Learn from the remaining errors</h3>
+          <svg viewBox="0 0 460 200" role="img" aria-labelledby="elo-errors-title elo-errors-desc">
+            <title id="elo-errors-title">Illustrative errors on calibration models</title>
+            <desc id="elo-errors-desc">
+              Nineteen model errors, each divided by its bootstrap standard error. The selected quantile determines the prediction interval’s width.
+            </desc>
+            <rect id="elo-error-area" x="35" y="55" width="260" height="75" fill="#e5eef8" />
+            <path d="M35 130H425" stroke="#aeb6c0" />
+            <g id="elo-error-dots" fill="#185aa5">
+              <circle cx="50.6" cy="85" r="5" />
+              <circle cx="63.6" cy="98" r="5" />
+              <circle cx="76.6" cy="111" r="5" />
+              <circle cx="93.5" cy="85" r="5" />
+              <circle cx="106.5" cy="98" r="5" />
+              <circle cx="119.5" cy="111" r="5" />
+              <circle cx="139" cy="85" r="5" />
+              <circle cx="145.5" cy="98" r="5" />
+              <circle cx="152" cy="111" r="5" />
+              <circle cx="165" cy="85" r="5" />
+              <circle cx="171.5" cy="98" r="5" />
+              <circle cx="184.5" cy="111" r="5" />
+              <circle cx="191" cy="85" r="5" />
+              <circle cx="210.5" cy="98" r="5" />
+              <circle cx="230" cy="111" r="5" />
+              <circle cx="249.5" cy="85" r="5" />
+              <circle cx="269" cy="98" r="5" />
+              <circle cx="295" cy="111" r="5" />
+              <circle cx="399" cy="85" r="5" />
+            </g>
+            <path id="elo-q-line" d="M295 42V138" stroke="#185aa5" stroke-dasharray="4 4" />
+            <g class="elo-axis-text">
+              <text x="35" y="155" text-anchor="middle">0</text>
+              <text x="165" y="155" text-anchor="middle">1</text>
+              <text x="295" y="155" text-anchor="middle">2</text>
+              <text x="425" y="155" text-anchor="middle">3</text>
+              <text x="230" y="189" text-anchor="middle">Error / bootstrap SE</text>
+            </g>
+          </svg>
+          <figcaption><output id="elo-quantile">18th of 19 errors → q = 2.0</output></figcaption>
+        </figure>
+        <figure>
+          <h3>Apply that margin to the new model</h3>
+          <svg viewBox="0 0 460 200" role="img" aria-labelledby="elo-band-title elo-band-desc">
+            <title id="elo-band-title">Illustrative conformal interval for the new model</title>
+            <desc id="elo-band-desc">
+              The interval is centered on the fitted Elo. With a bootstrap standard error of 25 Elo, q of 2 gives a margin of 50 Elo.
+            </desc>
+            <path d="M40 105H420" stroke="#aeb6c0" />
+            <rect id="elo-band-fill" x="135" y="78" width="190" height="54" fill="#e5eef8" />
+            <path id="elo-band-line" d="M135 94V116 M135 105H325 M325 94V116" stroke="#185aa5" stroke-width="3" />
+            <circle cx="230" cy="105" r="7" fill="#185aa5" />
+            <g class="elo-axis-text">
+              <text id="elo-axis-low" x="40" y="156" text-anchor="middle">1,118</text>
+              <text id="elo-axis-middle" x="230" y="156" text-anchor="middle">1,218</text>
+              <text id="elo-axis-high" x="420" y="156" text-anchor="middle">1,318</text>
+              <text x="230" y="190" text-anchor="middle">New model’s Elo</text>
+            </g>
+            <text id="elo-band-label" x="230" y="48" text-anchor="middle" class="elo-band-label">1,218 ± 50 Elo</text>
+          </svg>
+          <figcaption><output id="elo-band-caption">90% prediction interval · width 100 Elo</output></figcaption>
+        </figure>
+      </div>
+      <p class="figure-note">Higher coverage → wider intervals.</p>
+    </div>
+    <p class="elo-coverage-note">
+      A 90% coverage target means including the human rating for at least 90% of new models on average, under the same sampling conditions as
+      calibration (exchangeability).
+    </p>
+  </div>
+</section>
+
+<section class="section" id="results" aria-labelledby="results-heading">
+  <div class="container">
+    <h2 id="results-heading">More accurate ratings, tighter uncertainty intervals</h2>
+    <p class="section-intro">
+      Across 55 held-out LMArena models, using calibrated score gaps reduces Elo error for every judge. With less disagreement left between estimated
+      and human ratings, conformal intervals become narrower too.
+    </p>
+    <div class="elo-results-summary">
+      <div>
+        <strong>61% <span>lower rating error</span></strong>
+        <p>45.9 → 17.9 Elo mean absolute error, averaged across judges</p>
+      </div>
+      <div>
+        <strong>39–70% <span>narrower intervals</span></strong>
+        <p>Across all eight judges, at the same 90% coverage target</p>
+      </div>
+    </div>
+    <figure class="elo-result-figure paper-figure">
+      <a href="{{ '/assets/img/papers/conformal-elo/figures/rating-results.svg' | relative_url }}">
+        <picture>
+          <source
+            media="(max-width: 700px)"
+            srcset="{{ '/assets/img/papers/conformal-elo/figures/rating-results-mobile.svg' | relative_url }}"
+            width="360"
+            height="750"
+          />
+          <img
+            src="{{ '/assets/img/papers/conformal-elo/figures/rating-results.svg' | relative_url }}"
+            width="1040"
+            height="440"
+            loading="lazy"
+            alt="Eight judges, two improvements: Soft-Elo reduces mean absolute rating error by 39–73% and prediction interval width by 39–70%. For DeepSeek-V3.2, error falls from 63.4 to 17.1 Elo and interval width from 261 to 78 Elo. All eight judges improve on both measures."
+          />
+        </picture>
+      </a>
+      <figcaption>
+        Tables 2–3. Interval widths are median widths averaged over five calibration/test splits. Lower is better in both panels.
+      </figcaption>
+    </figure>
+    <div class="elo-results-takeaway">
+      <p><strong>92.1–96.4% observed coverage</strong> across the eight judges, against a 90% target.</p>
+      <p>
+        Model order remains largely unchanged. Soft-Elo makes the gaps between models closer to those measured by human votes, with tighter intervals
+        around each rating.
+      </p>
+    </div>
+  </div>
+</section>

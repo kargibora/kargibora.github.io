@@ -1,0 +1,686 @@
+---
+layout: half-truths
+permalink: /half-truths/
+title: Half-Truths Break Similarity-Based Retrieval
+description: A study of incorrect caption additions in image–text retrieval and component-level supervision for CLIP.
+authors: '<span class="author-block"><a href="/">Bora Kargi</a><sup>1,2</sup></span>, <span class="author-block"><a href="https://oshapio.github.io/">Arnas Uselis</a><sup>1</sup></span>, <span class="author-block"><a href="https://seongjoonoh.com/">Seong Joon Oh</a><sup>1</sup></span>'
+affiliations: "<sup>1</sup> University of Tübingen · Tübingen AI Center<br><sup>2</sup> Konrad Zuse School of Excellence in Learning and Intelligent Systems (ELIZA)"
+arxiv: "2602.23906"
+paper_url: /assets/pdf/half-truths.pdf
+code_url: https://github.com/kargibora/CS-CLIP
+data_url: https://huggingface.co/datasets/kbora/Half-Truths
+data_label: Evaluation Data
+checkpoint_url: https://github.com/kargibora/CS-CLIP#pre-trained-checkpoints
+training_data_url: https://huggingface.co/datasets/kbora/CS-CLIP-Training
+resource_icons: true
+show_arxiv_link: false
+venue_above_title: true
+extra_css: /assets/css/half-truths-page.css
+social_image: /assets/img/papers/half-truths/social.png
+social_alt: "Half-Truths Break Similarity-Based Retrieval — authors, NeurIPS 2026, and the half-truth retrieval example."
+related_name: Conformal Elo
+related_url: /conformal-elo/
+citation: |
+  @inproceedings{kargi2026halftruths,
+    title     = {Half-Truths Break Similarity-Based Retrieval},
+    author    = {Kargi, Bora and Uselis, Arnas and Oh, Seong Joon},
+    booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+    year      = {2026},
+    url       = {https://arxiv.org/abs/2602.23906}
+  }
+---
+
+<section class="section" id="idea" aria-labelledby="diagnostic-heading">
+  <div class="container">
+    <h2 id="diagnostic-heading">Adding a wrong detail can make a caption score higher</h2>
+    <p class="section-intro">
+      CLIP retrieves images by scoring how well they match a text description. Adding something that is not in the image should lower that score. Yet
+      a correct description with one false detail—a <strong>half-truth</strong>—can score higher. Compare CLIP with our method, CS-CLIP, on two real
+      examples below.
+    </p>
+    <div class="content">
+      <div class="paper-demo" id="half-demo">
+        <div class="demo-controls" hidden>
+          <div class="demo-selector">
+            <label for="half-example">Example</label
+            ><span class="select"
+              ><select id="half-example">
+                <option value="0">Object addition</option>
+                <option value="1">Relation addition</option>
+              </select></span
+            >
+          </div>
+          <button type="button" class="quiet-button" id="half-pause" aria-pressed="false">Pause animation</button>
+        </div>
+        <div class="demo-grid">
+          <img
+            id="half-image"
+            src="{{ '/assets/img/papers/half-truths/entity.jpg' | relative_url }}"
+            alt="A woman using computers at a table; no printer is visible."
+          />
+          <div>
+            <fieldset class="demo-choices" hidden>
+              <legend>Caption</legend>
+              <label><input type="radio" name="half-caption" value="anchor" checked /> Original caption</label>
+              <label><input type="radio" name="half-caption" value="full" /> Correct detail</label>
+              <label><input type="radio" name="half-caption" value="half" /> False detail</label>
+            </fieldset>
+            <p class="demo-caption" id="half-caption-text" data-kind="anchor">
+              <span id="half-caption-anchor">woman</span><span id="half-caption-addition"></span>
+            </p>
+            <p class="demo-axis-label">Image–text similarity · dashed lines show the score before adding a detail</p>
+            <div class="demo-row">
+              <span>CLIP</span
+              ><span class="demo-track"
+                ><span class="chart-bar" id="half-clip-bar" style="width: 100%; transform: scaleX(0.42724609375)"></span
+                ><span class="demo-anchor" id="half-clip-anchor" style="left: 42.724609375%"></span></span
+              ><output id="half-clip-score">0.214</output>
+            </div>
+            <div class="demo-row">
+              <span>CS-CLIP</span
+              ><span class="demo-track"
+                ><span class="chart-bar chart-ours" id="half-cs-bar" style="width: 100%; transform: scaleX(0.5501380562782288)"></span
+                ><span class="demo-anchor" id="half-cs-anchor" style="left: 55.01380562782288%"></span></span
+              ><output id="half-cs-score">0.275</output>
+            </div>
+            <div class="demo-axis" aria-hidden="true"><span>0.0</span><span>0.25</span><span>0.5</span></div>
+            <p id="half-explanation" class="demo-explanation" aria-live="off">
+              Start with a correct description. The dashed lines mark its score before adding a detail.
+            </p>
+          </div>
+        </div>
+        <p class="demo-note">
+          Measured scores from the verified COCO evaluation set. A correct addition should raise the score; a false addition should lower it.
+        </p>
+        <script type="application/json" id="half-example-data">
+          [
+            {
+              "item_id": 585,
+              "type": "entity",
+              "anchor": "woman",
+              "half": "woman and a printer",
+              "full": "woman and computer",
+              "scores": {
+                "CLIP": {
+                  "type": "entity",
+                  "foil_type": "object_change",
+                  "s_anchor": 0.213623046875,
+                  "s_half": 0.2420654296875,
+                  "s_full": 0.283447265625,
+                  "correct": false,
+                  "ft_gt_st": true,
+                  "ft_gt_ht": true,
+                  "cor": false,
+                  "delta": -0.0284423828125,
+                  "switched": false
+                },
+                "CS-CLIP": {
+                  "type": "entity",
+                  "foil_type": "object_change",
+                  "s_anchor": 0.2750690281391144,
+                  "s_half": 0.25892898440361023,
+                  "s_full": 0.3182932138442993,
+                  "correct": true,
+                  "ft_gt_st": true,
+                  "ft_gt_ht": true,
+                  "cor": true,
+                  "delta": 0.01614004373550415,
+                  "switched": false
+                }
+              },
+              "image": "entity.jpg",
+              "alt": "A woman using computers at a table; no printer is visible."
+            },
+            {
+              "item_id": 967,
+              "type": "relation",
+              "anchor": "cook",
+              "half": "cook is outside kitchen",
+              "full": "cook is in kitchen",
+              "scores": {
+                "CLIP": {
+                  "type": "relation",
+                  "foil_type": "antonym",
+                  "s_anchor": 0.251953125,
+                  "s_half": 0.26123046875,
+                  "s_full": 0.263671875,
+                  "correct": false,
+                  "ft_gt_st": true,
+                  "ft_gt_ht": true,
+                  "cor": false,
+                  "delta": -0.00927734375,
+                  "switched": false
+                },
+                "CS-CLIP": {
+                  "type": "relation",
+                  "foil_type": "antonym",
+                  "s_anchor": 0.3229239284992218,
+                  "s_half": 0.2665737271308899,
+                  "s_full": 0.3306443691253662,
+                  "correct": true,
+                  "ft_gt_st": true,
+                  "ft_gt_ht": true,
+                  "cor": true,
+                  "delta": 0.05635020136833191,
+                  "switched": false
+                }
+              },
+              "image": "relation-kitchen.jpg",
+              "alt": "A cook working at a stove inside a kitchen, surrounded by pots and shelves.",
+              "image_source": "http://images.cocodataset.org/val2014/COCO_val2014_000000143576.jpg"
+            }
+          ]
+        </script>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section abstract-section" id="abstract" aria-labelledby="abstract-heading">
+  <div class="container reading-width">
+    <h2 id="abstract-heading">Abstract</h2>
+    <div class="abstract-text">
+      <p>
+        When a text description is extended with an additional detail, image-text similarity should drop if that detail is wrong. We show that
+        CLIP-style dual encoders often violate this intuition: appending a plausible but incorrect object or relation to an otherwise correct
+        description can increase the similarity score. We call such cases <em>half-truths</em>. Across 1,437 verified comparisons from COCO and CC3M
+        using two foil generators, we find that this failure persists across generators and image domains. On COCO with Qwen-generated foils, CLIP
+        prefers the correct shorter description only 34.0% of the time, dropping to 27.8% for relation additions. We trace this vulnerability to weak
+        supervision on caption parts: contrastive training aligns full sentences but does not explicitly enforce that individual entities and
+        relations are grounded.
+      </p>
+      <p>
+        We propose CS-CLIP (Component-Supervised CLIP), which decomposes captions into entity and relation units, constructs a minimally edited foil
+        for each unit, and fine-tunes the model to score the correct unit above its foil while preserving standard dual-encoder inference. CS-CLIP
+        raises half-truth accuracy to 76.4% on this set and improves average performance on established compositional benchmarks by 5.8 points,
+        suggesting that reducing half-truth errors aligns with broader gains in compositional understanding.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section method-section" id="method" aria-labelledby="method-heading">
+  <div class="container">
+    <h2 id="method-heading">Teach the model to check each part of a caption</h2>
+    <p class="section-intro">
+      Standard CLIP training matches whole captions to images. <strong>Component-Supervised CLIP (CS-CLIP)</strong> also trains on the objects,
+      attributes, and relationships inside them. Each correct part is paired with a minimally changed, incorrect alternative, which we call a
+      <em>foil</em>.
+    </p>
+    <ol class="ht-method-steps">
+      <li>
+        <span class="ht-step-number">01</span>
+        <h3>Split the caption</h3>
+        <p class="ht-example-caption">“A woman riding a brown horse in a park.”</p>
+        <div class="ht-units"><span>brown horse</span><span>woman riding horse</span><span>woman in park</span></div>
+        <p>A text model extracts objects and relationships.</p>
+      </li>
+      <li>
+        <span class="ht-step-number">02</span>
+        <h3>Change one detail</h3>
+        <div class="ht-pair"><span>brown horse</span><span aria-hidden="true">→</span><span class="ht-foil">white horse</span></div>
+        <div class="ht-pair"><span>woman riding horse</span><span aria-hidden="true">→</span><span class="ht-foil">woman riding giraffe</span></div>
+        <p>Small edits create plausible alternatives.</p>
+      </li>
+      <li>
+        <span class="ht-step-number">03</span>
+        <h3>Train on the difference</h3>
+        <div class="ht-training-rule"><span>Image + correct part</span><strong>↑ similarity</strong></div>
+        <div class="ht-training-rule"><span>Image + incorrect part</span><strong>↓ similarity</strong></div>
+        <p>Learn these distinctions alongside whole-caption training.</p>
+      </li>
+    </ol>
+    <p class="ht-inference-note"><strong>Same retrieval at test time.</strong> Encode the image, encode the text, compare their similarity.</p>
+    <div class="ht-pipeline-detail">
+      <h3>Training architecture</h3>
+      <figure class="paper-figure">
+        <a href="{{ '/assets/img/papers/half-truths/method.svg' | relative_url }}"
+          ><img
+            src="{{ '/assets/img/papers/half-truths/method.svg' | relative_url }}"
+            alt="CS-CLIP training architecture: extract caption units, generate minimally edited foils, and train image and text encoders with unit-level supervision."
+            loading="lazy"
+        /></a>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="section" id="results">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <h2>Better at rejecting false details—even on a different image source</h2>
+      </div>
+    </div>
+    <p class="section-intro">
+      Accuracy measures how often the correct description beats its half-truth. We test 1,437 human-verified comparisons: COCO with two different foil
+      generators, and CC3M with different images. CS-CLIP leads on both COCO sets and on relationship additions across all three sets. Entity
+      additions describe objects or attributes; relation additions describe relationships.
+    </p>
+    <div class="result-overview" role="region" aria-label="Half-truth accuracy summary">
+      <div class="chart-heading">
+        <h3>Half-Truth accuracy (%)</h3>
+        <fieldset class="metric-switch" hidden>
+          <legend class="sr-only">Caption additions</legend>
+          <label><input type="radio" name="result-metric" value="0" checked /><span>Overall</span></label>
+          <label><input type="radio" name="result-metric" value="1" /><span>Entities</span></label>
+          <label><input type="radio" name="result-metric" value="2" /><span>Relations</span></label>
+        </fieldset>
+      </div>
+      <div class="benchmark-grid">
+        <article class="dataset-panel">
+          <header>
+            <span class="ht-dataset-label">Main evaluation</span>
+            <h3>COCO · Qwen</h3>
+            <span>509 comparisons</span>
+          </header>
+          <div
+            class="result-bar-row base"
+            data-dataset="coco"
+            data-model="CLIP"
+            data-values="[33.988212180746565, 40.15748031496063, 27.84313725490196]"
+          >
+            <span>CLIP</span><span class="result-track" aria-hidden="true"><span class="result-bar" style="width: 33.988212180746565%"></span></span
+            ><output>34.0</output>
+          </div>
+          <div
+            class="result-bar-row fsc"
+            data-dataset="coco"
+            data-model="FSC-CLIP-cc3m"
+            data-values="[61.29666011787819, 70.86614173228347, 51.76470588235294]"
+          >
+            <span>FSC-CLIP</span
+            ><span class="result-track" aria-hidden="true"><span class="result-bar" style="width: 61.29666011787819%"></span></span
+            ><output>61.3</output>
+          </div>
+          <div
+            class="result-bar-row ours"
+            data-dataset="coco"
+            data-model="CS-CLIP"
+            data-values="[76.42436149312377, 73.62204724409449, 79.2156862745098]"
+          >
+            <span>CS-CLIP</span><span class="result-track" aria-hidden="true"><span class="result-bar" style="width: 76.42436149312377%"></span></span
+            ><output>76.4</output>
+          </div>
+          <div class="result-axis" aria-hidden="true"><span>0</span><span>50</span><span>100%</span></div>
+        </article>
+        <article class="dataset-panel">
+          <header>
+            <span class="ht-dataset-label">Different foil generator</span>
+            <h3>COCO · Mistral</h3>
+            <span>454 comparisons</span>
+          </header>
+          <div
+            class="result-bar-row base"
+            data-dataset="mistral"
+            data-model="CLIP"
+            data-values="[28.634361233480178, 34.523809523809526, 21.287128712871286]"
+          >
+            <span>CLIP</span><span class="result-track" aria-hidden="true"><span class="result-bar" style="width: 28.634361233480178%"></span></span
+            ><output>28.6</output>
+          </div>
+          <div
+            class="result-bar-row fsc"
+            data-dataset="mistral"
+            data-model="FSC-CLIP-cc3m"
+            data-values="[53.9647577092511, 58.333333333333336, 48.51485148514851]"
+          >
+            <span>FSC-CLIP</span><span class="result-track" aria-hidden="true"><span class="result-bar" style="width: 53.9647577092511%"></span></span
+            ><output>54.0</output>
+          </div>
+          <div
+            class="result-bar-row ours"
+            data-dataset="mistral"
+            data-model="CS-CLIP"
+            data-values="[67.18061674008811, 70.23809523809524, 63.366336633663366]"
+          >
+            <span>CS-CLIP</span><span class="result-track" aria-hidden="true"><span class="result-bar" style="width: 67.18061674008811%"></span></span
+            ><output>67.2</output>
+          </div>
+          <div class="result-axis" aria-hidden="true"><span>0</span><span>50</span><span>100%</span></div>
+        </article>
+        <article class="dataset-panel">
+          <header>
+            <span class="ht-dataset-label">Different image source</span>
+            <h3>CC3M · Qwen</h3>
+            <span>474 comparisons</span>
+          </header>
+          <div
+            class="result-bar-row base"
+            data-dataset="cc3m"
+            data-model="CLIP"
+            data-values="[36.075949367088604, 46.613545816733065, 24.2152466367713]"
+          >
+            <span>CLIP</span><span class="result-track" aria-hidden="true"><span class="result-bar" style="width: 36.075949367088604%"></span></span
+            ><output>36.1</output>
+          </div>
+          <div
+            class="result-bar-row fsc"
+            data-dataset="cc3m"
+            data-model="FSC-CLIP-cc3m"
+            data-values="[67.51054852320675, 76.49402390438247, 57.399103139013455]"
+          >
+            <span>FSC-CLIP</span
+            ><span class="result-track" aria-hidden="true"><span class="result-bar" style="width: 67.51054852320675%"></span></span
+            ><output>67.5</output>
+          </div>
+          <div
+            class="result-bar-row ours"
+            data-dataset="cc3m"
+            data-model="CS-CLIP"
+            data-values="[66.24472573839662, 68.92430278884463, 63.228699551569505]"
+          >
+            <span>CS-CLIP</span><span class="result-track" aria-hidden="true"><span class="result-bar" style="width: 66.24472573839662%"></span></span
+            ><output>66.2</output>
+          </div>
+          <div class="result-axis" aria-hidden="true"><span>0</span><span>50</span><span>100%</span></div>
+        </article>
+      </div>
+      <p class="figure-note">Higher is better. FSC-CLIP is trained on CC3M and leads on that set overall; CS-CLIP leads on its relation examples.</p>
+    </div>
+    <div class="results-table">
+      <h3>Compare all 16 models</h3>
+      <div class="ht-table-toolbar">
+        <div class="ht-table-control" hidden>
+          <label for="half-table-metric">Compare</label>
+          <select id="half-table-metric">
+            <option value="0">Overall</option>
+            <option value="1">Entities</option>
+            <option value="2">Relations</option>
+          </select>
+        </div>
+        <a href="{{ '/assets/img/papers/half-truths/results.csv' | relative_url }}" download>Download all results (CSV) ↓</a>
+      </div>
+      <div class="table-container" role="region" aria-label="Full Half-truth accuracy results" tabindex="0">
+        <table class="table" id="half-results">
+          <caption>
+            <span id="half-table-caption">Overall accuracy (%)</span>
+            · higher is better · bold marks the best score
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Model</th>
+              <th scope="col">COCO<br /><span>Qwen</span></th>
+              <th scope="col">COCO<br /><span>Mistral</span></th>
+              <th scope="col">CC3M<br /><span>Qwen</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">CLIP</th>
+              <td data-values="[34.0, 40.2, 27.8]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 34%">34.0</span>
+              </td>
+              <td data-values="[28.6, 34.5, 21.3]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 28.6%">28.6</span>
+              </td>
+              <td data-values="[36.1, 46.6, 24.2]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 36.1%">36.1</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">NegCLIP</th>
+              <td data-values="[53.8, 62.2, 45.5]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 53.8%">53.8</span>
+              </td>
+              <td data-values="[45.2, 54.8, 33.2]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 45.2%">45.2</span>
+              </td>
+              <td data-values="[55.3, 67.7, 41.3]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 55.3%">55.3</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">DeGLA</th>
+              <td data-values="[46.2, 59.1, 33.3]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 46.2%">46.2</span>
+              </td>
+              <td data-values="[40.1, 53.2, 23.8]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 40.1%">40.1</span>
+              </td>
+              <td data-values="[52.3, 64.9, 38.1]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 52.3%">52.3</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">ReadCLIP</th>
+              <td data-values="[58.0, 66.1, 49.8]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 58%">58.0</span>
+              </td>
+              <td data-values="[50.9, 60.3, 39.1]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 50.9%">50.9</span>
+              </td>
+              <td data-values="[60.1, 65.7, 53.8]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 60.1%">60.1</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">FSC-CLIP (CC3M)</th>
+              <td data-values="[61.3, 70.9, 51.8]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 61.3%">61.3</span>
+              </td>
+              <td data-values="[54.0, 58.3, 48.5]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 54%">54.0</span>
+              </td>
+              <td data-values="[67.5, 76.5, 57.4]" data-best="[true, true, false]">
+                <span class="ht-table-score is-best" style="--score: 67.5%">67.5</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">FSC-CLIP (COCO)</th>
+              <td data-values="[56.0, 68.9, 43.1]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 56%">56.0</span>
+              </td>
+              <td data-values="[50.7, 63.1, 35.1]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 50.7%">50.7</span>
+              </td>
+              <td data-values="[60.1, 71.3, 47.5]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 60.1%">60.1</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">FSC-CLIP (LAION+COCO)</th>
+              <td data-values="[49.7, 58.3, 41.2]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 49.7%">49.7</span>
+              </td>
+              <td data-values="[43.8, 49.6, 36.6]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 43.8%">43.8</span>
+              </td>
+              <td data-values="[61.0, 70.9, 49.8]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 61%">61.0</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">CoN-CLIP</th>
+              <td data-values="[56.4, 72.0, 40.8]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 56.4%">56.4</span>
+              </td>
+              <td data-values="[50.4, 63.1, 34.7]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 50.4%">50.4</span>
+              </td>
+              <td data-values="[48.1, 64.9, 29.1]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 48.1%">48.1</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">CE-CLIP</th>
+              <td data-values="[43.8, 48.4, 39.2]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 43.8%">43.8</span>
+              </td>
+              <td data-values="[39.2, 45.6, 31.2]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 39.2%">39.2</span>
+              </td>
+              <td data-values="[55.5, 58.6, 52.0]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 55.5%">55.5</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">LabCLIP</th>
+              <td data-values="[44.4, 51.2, 37.6]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 44.4%">44.4</span>
+              </td>
+              <td data-values="[38.1, 48.0, 25.7]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 38.1%">38.1</span>
+              </td>
+              <td data-values="[43.0, 51.0, 34.1]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 43%">43.0</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">DAC (LLM)</th>
+              <td data-values="[39.7, 46.9, 32.5]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 39.7%">39.7</span>
+              </td>
+              <td data-values="[36.3, 44.4, 26.2]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 36.3%">36.3</span>
+              </td>
+              <td data-values="[42.0, 56.6, 25.6]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 42%">42.0</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">DAC (SAM)</th>
+              <td data-values="[37.1, 43.7, 30.6]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 37.1%">37.1</span>
+              </td>
+              <td data-values="[35.7, 42.9, 26.7]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 35.7%">35.7</span>
+              </td>
+              <td data-values="[42.0, 53.0, 29.6]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 42%">42.0</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">TSVLC</th>
+              <td data-values="[37.1, 45.3, 29.0]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 37.1%">37.1</span>
+              </td>
+              <td data-values="[35.9, 40.5, 30.2]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 35.9%">35.9</span>
+              </td>
+              <td data-values="[41.8, 55.0, 26.9]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 41.8%">41.8</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">CLoVe</th>
+              <td data-values="[34.2, 40.2, 28.2]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 34.2%">34.2</span>
+              </td>
+              <td data-values="[28.6, 36.5, 18.8]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 28.6%">28.6</span>
+              </td>
+              <td data-values="[48.5, 54.6, 41.7]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 48.5%">48.5</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">CLIC (LAION)</th>
+              <td data-values="[33.8, 49.2, 18.4]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 33.8%">33.8</span>
+              </td>
+              <td data-values="[31.3, 40.1, 20.3]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 31.3%">31.3</span>
+              </td>
+              <td data-values="[39.5, 56.2, 20.6]" data-best="[false, false, false]">
+                <span class="ht-table-score" style="--score: 39.5%">39.5</span>
+              </td>
+            </tr>
+            <tr class="highlight">
+              <th scope="row">CS-CLIP (ours)</th>
+              <td data-values="[76.4, 73.6, 79.2]" data-best="[true, true, true]">
+                <span class="ht-table-score is-best" style="--score: 76.4%">76.4</span>
+              </td>
+              <td data-values="[67.2, 70.2, 63.4]" data-best="[true, true, true]">
+                <span class="ht-table-score is-best" style="--score: 67.2%">67.2</span>
+              </td>
+              <td data-values="[66.2, 68.9, 63.2]" data-best="[false, false, true]">
+                <span class="ht-table-score" style="--score: 66.2%">66.2</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="figure-note">CS-CLIP has the highest overall accuracy on both COCO sets; FSC-CLIP (CC3M) has the highest on CC3M.</p>
+    </div>
+    <div class="ablation-panel">
+      <div class="panel-heading">
+        <h3>What comes from the examples, and what comes from the training?</h3>
+      </div>
+      <p class="ht-ablation-intro">
+        Give the model the same incorrect alternatives, then change whether it learns from whole sentences or individual parts.
+      </p>
+      <div class="table-container" role="region" aria-label="Foil supervision ablation" tabindex="0">
+        <table class="table">
+          <caption>
+            Accuracy (%) · COCO (Qwen) and 16 compositional benchmarks · higher is better
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Training</th>
+              <th scope="col">Entity</th>
+              <th scope="col">Relation</th>
+              <th scope="col">Compositional</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">NegCLIP</th>
+              <td>62.2</td>
+              <td>45.5</td>
+              <td>55.3</td>
+            </tr>
+            <tr>
+              <th scope="row">Same foils, whole sentences</th>
+              <td>66.5</td>
+              <td><strong>82.7</strong></td>
+              <td>56.8</td>
+            </tr>
+            <tr class="highlight">
+              <th scope="row">Same foils, individual parts <span class="ht-ours-label">CS-CLIP</span></th>
+              <td>73.6</td>
+              <td>79.2</td>
+              <td>57.8</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="figure-note">
+        Sentence-level foils already improve relationships. Training on individual parts adds 7.1 points on entities and 1.0 on compositional
+        accuracy; the sentence-level variant remains strongest on relations.
+      </p>
+    </div>
+  </div>
+</section>
+<section class="section ht-conclusion" id="takeaway" aria-labelledby="takeaway-heading">
+  <div class="container">
+    <h2 id="takeaway-heading">Fewer half-truth errors, stronger compositional understanding</h2>
+    <p class="section-intro">
+      Among the 16 evaluated models, CS-CLIP achieves the highest average Half-Truth accuracy across the three sets and the highest average
+      image-to-text accuracy across 16 compositional benchmarks.
+    </p>
+    <figure class="paper-figure ht-summary-figure">
+      <a href="{{ '/assets/img/papers/half-truths/task-summary.svg' | relative_url }}">
+        <picture
+          ><source
+            media="(max-width: 600px)"
+            srcset="{{ '/assets/img/papers/half-truths/task-summary-mobile.svg' | relative_url }}"
+            width="360"
+            height="650" />
+          <img
+            src="{{ '/assets/img/papers/half-truths/task-summary.svg' | relative_url }}"
+            width="1000"
+            height="430"
+            loading="lazy"
+            alt="CS-CLIP compared with CLIP, NegCLIP, DeGLA, ReadCLIP, and FSC-CLIP trained on CC3M or COCO. CS-CLIP leads with 69.9% average Half-Truth accuracy and 57.8% compositional accuracy; the strongest baselines reach 60.9% and 57.4%, respectively."
+        /></picture>
+      </a>
+      <figcaption>
+        Selected baselines, including the strongest comparator for each metric. Half-Truth averages the three evaluation sets; compositional accuracy
+        averages 16 benchmarks. FSC-CLIP labels indicate its training data.
+      </figcaption>
+    </figure>
+    <p class="ht-takeaway">
+      <strong>The gains extend beyond the Half-Truth test.</strong> CS-CLIP also improves matching on independent compositional benchmarks, while
+      keeping standard dual-encoder retrieval. Zero-shot classification falls from 63.6% to 59.9%.
+    </p>
+  </div>
+</section>
