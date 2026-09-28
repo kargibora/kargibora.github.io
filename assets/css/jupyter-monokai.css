@@ -363,6 +363,14 @@ div.panel,
   box-shadow: none;
 }
 
+div.panel > .panel-heading {
+  font-size: 14pt;
+  color: #f8f8f0;
+  background: #2f2f2f;
+  background-color: #2f2f2f;
+  border: 0;
+}
+
 input,
 button,
 select,
@@ -434,6 +442,8 @@ h4,
 pre,
 code,
 form,
+fieldset,
+legend,
 input,
 button,
 textarea,
