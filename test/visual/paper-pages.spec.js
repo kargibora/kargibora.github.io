@@ -20,10 +20,7 @@ for (const [slug, title, arxiv] of [
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(`${base}/${slug}/`);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
-    await expect(page.getByRole("link", { name: "Paper", exact: true })).toHaveAttribute(
-      "href",
-      slug === "half-truths" ? "/al-folio/assets/pdf/half-truths.pdf" : `https://arxiv.org/pdf/${arxiv}`
-    );
+    await expect(page.getByRole("link", { name: "Paper", exact: true })).toHaveAttribute("href", `https://arxiv.org/pdf/${arxiv}`);
     await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", new RegExp(`/${slug}/$`));
     const preview = await page.locator('meta[property="og:image"]').getAttribute("content");
     expect((await page.request.get(`${base}/assets/img/papers/${slug}/social.png`)).ok()).toBeTruthy();
